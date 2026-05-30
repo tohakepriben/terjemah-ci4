@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="id" translate="no">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width,initial-scale=1"/>
+		<title>Toha Kepriben</title>
+	  <link href="favicon.png" rel="icon" type="image/png" />	
+		<link href="lib/css/core.css" rel="stylesheet">
+		<link href="lib/css/main.css" rel="stylesheet">
+		<script src="lib/js/core.js"></script>
+	</head>
+	<body style="padding-top: 90px">
+		<nav class="navbar navbar-default navbar-fixed-top" style="min-height: 30px;">
+		  <div class="container-fluid" style="padding-right: 0">
+		    <div class="navbar-header" style="display: inline-block; margin-top: 4px">
+		      <a class="navbar-brand" id="titleKitab" href="javascript:void(0)" style="color: darkblue; font-weight: bold;"></a>
+		    </div>
+	      <div class="pull-right"><button class="btn btn-sm btn-outline-light" data-toggle="modal" data-target="#modal-menu"><i class="navbar-brand glyphicon glyphicon-option-vertical" style="color: black;"></i></button></div>
+		  </div><!-- /.container-fluid -->
+		  <div id="toc-title" class="col-12 text-danger" dir="rtl" style="text-align: center; font-size: 20px; border-top: 1px solid #e7e7e7;"></div>
+		</nav>
+		<div id="content" style="padding:5px; border:0">
+			<div id="div-nash" dir="rtl" style="text-align: justify"></div>
+			<hr style="margin: 8px 5px">
+			<div id="div-terjemah" style="text-align: justify"></div>
+		</div>
+
+		<div class="footer navbar-fixed-bottom" style="padding: 5px 0 0;background: white;">
+			<div class="btn-group btn-group-justified common" role="group" aria-label="Justified button group">
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-lg btn-default" data-toggle="modal" data-target="#modal-cari"><i class="glyphicon glyphicon-search"></i></button>
+				</div>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-lg btn-default" data-toggle="modal" data-target="#modal-toc"><i class="glyphicon glyphicon-list"></i></button>
+				</div>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-lg btn-default" onclick="next()"><i class="glyphicon glyphicon-chevron-left"></i></button>
+				</div>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-lg btn-default" id="sel-id" data-id="" data-max="" data-toggle="modal" data-target="#modal-ke">0</button>
+				</div>
+				<div id="btn-right" class="btn-group" role="group">
+					<button type="button" class="btn btn-lg btn-default" onclick="prev()"><i class="glyphicon glyphicon-chevron-right"></i></button>
+				</div>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-lg btn-default" data-toggle="modal" data-target="#modal-bookmark"><i class="glyphicon glyphicon-bookmark"></i></button>
+				</div>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-lg btn-default" data-toggle="modal" data-target="#modal-tema"><i class="glyphicon glyphicon-adjust"></i></button>
+				</div>
+			</div>
+		</div>
+		
+		<!--modal-menu-->
+		<div id="modal-menu" class="modal" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document" style="margin-left: 170px;margin-top: 50px;">
+				<div class="modal-content">
+				<table class="table" style="margin-bottom: 0">
+					<tr><td>
+						<div class="btn-group btn-group-justified" role="group" aria-label="Justified button group">
+							<div class="btn-group" role="group">
+								<button type="button" class="btn btn-default" onclick="resizeFont(-1)"><i class="glyphicon glyphicon-text-size" style="font-size:0.7em"></i></button>
+							</div>
+							<div class="btn-group" role="group">
+								<button type="button" class="btn btn-default" onclick="resizeFont(1)"><i class="glyphicon glyphicon-text-size"></i></button>
+							</div>
+						</div>
+					</td></tr>
+					<tr onclick="useHarakat()" id="harakat"><td><i class="glyphicon glyphicon-check"></i> Tampilkan Harakat</td></tr>
+					<tr id="cekUpdate"><td><i class="glyphicon glyphicon-download-alt"></i> Cek update</td></tr>
+					<tr id="moreApp" class="hidden"><td><a href="https://play.google.com/store/apps/dev?id=6117885787606978105"><i class="glyphicon glyphicon-new-window"></i> Aplikasi lainnya</a></td></tr>
+					<tr onclick="JsInterface.shareApp()"><td><i class="glyphicon glyphicon-share-alt"></i> Share Aplikasi</td></tr>
+					<tr><td id="curVersiDb">Versi DB: null</td></tr>
+					<tr><td id="versiApp">Versi App: null</td></tr>
+					<tr class="removeAds text-danger" onclick="JsInterface.removeAds()"><td><i class="glyphicon glyphicon-star"></i> Hapus Iklan <i class="glyphicon glyphicon-star"></i></td></tr>
+				</table>
+				</div>
+			</div>
+		</div>
+		<!--modal-tema-->
+		<div id="modal-tema" class="modal" tabindex="-1" role="dialog">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+					<div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title"><i class="glyphicon glyphicon-adjust"></i> Tema dan Kecerahan</h4>
+		      </div>
+		    	<div class="modal-body">
+						<div class="btn-group btn-group-justified" data-toggle="buttons">
+			        <label class="btn btn-secondary"><input type="radio" name="inverts" id="invert0" value="0"> Cerah</label>
+			        <label class="btn btn-secondary"><input type="radio" name="inverts" id="invert1" value="1"> Gelap1</label>
+			        <label class="btn btn-secondary"><input type="radio" name="inverts" id="invert2" value="2"> Gelap2</label>
+			        <label class="btn btn-secondary"><input type="radio" name="inverts" id="invert3" value="3"> Gelap3</label>
+			        <label class="btn btn-secondary"><input type="radio" name="inverts" id="invert4" value="4"> Gelap4</label>
+				    </div>
+		    	</div>
+		    </div>
+		  </div>
+		</div>
+
+		<!--modal-cari-->
+		<div id="modal-cari" class="modal allow-scroll" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<form id="form-cari">
+							<div class="form-group input-group" style="margin-bottom: 0;margin-right: 30px;">
+								<span class="input-group-btn">
+									<button class="btn btn-default" type="button" data-toggle="modal" data-target="#modal-history"><i class="glyphicon glyphicon-time"></i></button>
+								</span>
+								<input name="key" type="search" class="form-control" placeholder="Cari..." required autofocus>
+								<span class="input-group-btn">
+									<button class="btn btn-default" type="button" onclick="$('[name=key]').val('').focus()"><i class="glyphicon glyphicon-erase"></i></button>
+									<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+								</span>
+							</div>
+						</form>
+						<div style="margin-bottom: -10px;">
+							Tips: Gunakan operator <code>& (and)</code> dan <code>| (or)</code> untuk memaksimalkan pencarian <button class="btn btn-xs btn-outline-success" id="btn-more"><i class="glyphicon glyphicon-menu-hamburger"></i> Selengkapnya</button>
+							<div id="more" class="hidden" style="max-height: 70vh; overflow-y: auto;">
+								Sebagai contoh ada 3 halaman berisi teks sesuai urutan berikut:
+								<ol style="padding-inline-start: 20px;">
+									<li>Sholat puasa dan menikah adalah syariat islam.</li>
+									<li>Sholat 5 waktu wajib bagi setiap mukallaf.</li>
+									<li>Orang yang tidak mempu menikah disunnahkan berpuasa.</li>
+								</ol>
+								Kemudian kita akan mencari dengan kata kunci berikut:
+								<ul style="padding-inline-start: 20px; margin-bottom: 0">
+									<li>
+										<code>sholat nikah</code><br>
+										Mesin akan mencari setiap halaman yang mengandung kata <code>sholat nikah</code>. Maka tidak ada hasilnya karena tidak ada halaman yang memuat dua kata tersebut secara berurutan.
+									</li>
+									<li>
+										<code>sholat | nikah</code><br>
+										Mesin akan mencari setiap halaman yang mengandung kata <code>sholat</code> atau <code>nikah</code>. Hasilnya adalah halaman 1, 2 dan 3.
+									</li>
+									<li>
+										<code>sholat & nikah</code><br>
+										Mesin akan mencari setiap halaman yang mengandung kata <code>sholat</code> dan <code>nikah</code>. Hasilnya hanya halaman 1.
+									</li>
+									<li>
+										<code>puasa & (sholat | nikah)</code><br>
+										Mesin akan mencari setiap halaman yang mengandung kata <code>puasa</code> dan <code>sholat</code>, atau <code>puasa</code> dan <code>nikah</code>. Hasilnya adalah halaman 1 dan 3.
+									</li>
+									<li>
+										<code>(syariat & nikah) | (puasa & nikah)</code><br>
+										Mesin akan mencari setiap halaman yang mengandung kata <code>syariat</code> dan <code>nikah</code>, atau mengandung kata <code>puasa</code> dan <code>nikah</code>. Hasilnya adalah halaman 2 dan 3.
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="modal-body hasil-pencarian"></div>
+				</div>
+			</div>
+		</div>
+
+		<!--modal-toc-->
+		<div id="modal-toc" class="modal allow-scroll" tabindex="-1" role="dialog" data-editmode="0">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title"><i class="glyphicon glyphicon-list"></i> Daftar Isi</h4>
+					</div>
+					<div class="modal-body">
+						<div id="toc" dir="rtl"></div>
+					</div>
+					<div class="modal-footer">
+						<div class="form-group input-group" style="margin-bottom: 0;">
+							<input id="caritoc" type="search" class="form-control" placeholder="Cari daftar isi" oninput="$('#toc').jstree('search',$('#caritoc').val())">
+							<span class="input-group-btn">
+								<button class="btn btn-default" onclick="$('#caritoc').val(''); $('#toc').jstree('clear_search');"><i class="glyphicon glyphicon-erase" style="transform: rotateY(180deg)"></i></button>
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<!--modal-history-->
+		<div id="modal-history" class="modal allow-scroll" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title"><i class="glyphicon glyphicon-time"></i> Riwayat pencarian</h4>
+					</div>
+					<div class="modal-body">
+						<div class="table-responsive" style="margin-bottom: 0; border: 0">
+							<table class="table table-striped" style="width:100%" id="tbl-history"></table>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-sm btn-danger" onclick="historyClear()"><i class="glyphicon glyphicon-erase" style="transform: rotateY(180deg)"></i> Clear</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!--modal-bookmark-->
+		<div id="modal-bookmark" class="modal allow-scroll" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title"><i class="glyphicon glyphicon-bookmark"></i> Penanda</h4>
+					</div>
+					<div class="modal-body">
+						<div class="table-responsive" style="margin-bottom: 0; border: 0">
+							<table class="table table-striped" style="width:100%" id="tbl-bookmark"></table>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-sm btn-success pull-left" onclick="bmAdd()"><i class="glyphicon glyphicon-plus"></i> Tambah</button>
+						<button class="btn btn-sm btn-danger" onclick="bmClear()"><i class="glyphicon glyphicon-erase" style="transform: rotateY(180deg)"></i> Clear</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!--modal-bm-add-->
+		<div id="modal-bm-add" class="modal" role="dialog">
+			<div class="modal-dialog modal-sm" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title"><i class="glyphicon glyphicon-plus"></i> Tambah Penanda</h4>
+					</div>
+					<div class="modal-body">
+						<form id="form-bm-add">
+							<div class="form-group input-group" style="margin-bottom: 0;">
+								<input id="txt-bm-add" type="text" class="form-control" required="" autofocus="" maxlength="25">
+								<span class="input-group-btn">
+									<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+								</span>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!--modal-bm-edit-->
+		<div id="modal-bm-edit" class="modal" role="dialog">
+			<div class="modal-dialog modal-sm" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title"><i class="glyphicon glyphicon-pencil"></i> Edit Penanda</h4>
+					</div>
+					<div class="modal-body">
+						<form id="form-bm-edit">
+							<input type="hidden" id="txt-bm-id"/>
+							<div class="form-group input-group" style="margin-bottom: 0;">
+								<input id="txt-bm-edit" type="text" class="form-control" required="" autofocus="" maxlength="25">
+								<span class="input-group-btn">
+									<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+								</span>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--modal-ke-->
+		<div id="modal-ke" class="modal" role="dialog">
+			<div class="modal-dialog modal-sm" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title"><i class="glyphicon glyphicon-folder-open"></i> Ke halaman</h4>
+					</div>
+					<div class="modal-body">
+						<form id="form-ke">
+							<div class="form-group input-group" style="margin-bottom: 0;">
+								<input id="sel-id-input" type="number" class="form-control" placeholder="Ketik halaman" min="1" max="" required autofocus>
+								<span class="input-group-btn">
+									<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-circle-arrow-right"></i></button>
+								</span>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div id="modal-iklan" class="modal" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title"><i class="glyphicon glyphicon-cloud-download"></i>&nbsp;&nbsp;Aplikasi Lainnya</h4>
+					</div>
+					<div class="modal-body">
+						<div id="myCarousel" class="carousel slide" data-ride="carousel">
+
+							<!-- Wrapper for slides -->
+							<div class="carousel-inner">
+								<div class="item active">
+									<a href="https://play.google.com/store/apps/details?id=com.tohakepriben.kalkulatorwaris">
+										<img src="iklan/kalkulator-waris.png">
+									</a>
+								</div>
+								<div class="item">
+									<a href="https://play.google.com/store/apps/details?id=com.tohakepriben.majmunadhom">
+										<img src="iklan/majmu-nadhom.png">
+									</a>
+								</div>
+								<div class="item">
+									<a href="https://play.google.com/store/apps/details?id=com.tohakepriben.kutubhadits">
+										<img src="iklan/kutub-hadits.png">
+									</a>
+								</div>
+								<!--<div class="item fathul_qorib">
+									<a href="https://play.google.com/store/apps/details?id=com.tohakepriben.fathulqorib">
+										<img src="iklan/fathul-qorib.png">
+									</a>
+								</div>
+								<div class="item fathul_muin">
+									<a href="https://play.google.com/store/apps/details?id=com.tohakepriben.fathulmuin">
+										<img src="iklan/fathul-muin.png">
+									</a>
+								</div>-->
+							</div>
+
+							<!-- Left and right controls -->
+							<a class="left carousel-control" href="#myCarousel" data-slide="prev">
+								<span class="glyphicon glyphicon-chevron-left"></span>
+								<span class="sr-only">Prev</span>
+							</a>
+							<a class="right carousel-control" href="#myCarousel" data-slide="next">
+								<span class="glyphicon glyphicon-chevron-right"></span>
+								<span class="sr-only">Next</span>
+							</a>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="modal-alert" class="modal" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header" style="padding: 5px 15px 5px 15px">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Pesan</h4>
+					</div>
+					<div class="modal-body">
+					
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-sm btn-default" data-dismiss="modal" aria-label="Close">Ok</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="lib/js/main.js"></script>
+	</body>
+</html>

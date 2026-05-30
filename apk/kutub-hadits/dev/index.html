@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="id" translate="no">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width,initial-scale=1"/>
+		<title>Kumpulan Hadits</title>
+	  <link href="favicon.png" rel="icon" type="image/png" />	
+		<link href="lib/css/core.css" rel="stylesheet">
+		<link href="lib/css/main.css" rel="stylesheet">
+		<script src="lib/js/core.js"></script>
+		<script>
+			var idxKitab = Number(localStorage.getItem('idxKitab')) || 0;
+			var dbKitabToc = [], dbKitab = [], versi=1, cntInterstitialAds=0, timeToShow=parseInt(localStorage.getItem('timeToShow') || 0);
+			function lsExist(key){return null!==localStorage.getItem(fixKey(key))}
+			function lsGet(key){return localStorage.getItem(fixKey(key))}
+			function lsSet(key, val){localStorage.setItem(fixKey(key), val)}
+			function lsRem(key){localStorage.removeItem(fixKey(key))}
+			function fixKey(key){return idxKitab+'_'+key}
+			$(function(){
+				const ctlContent = document.querySelector('#content');
+				ctlContent.addEventListener('copy', (event) => {
+					var kitab_propercase=properCase(kitab.replace('_',' '));
+					var url_play_store='https://play.google.com/store/apps/details?id=com.tohakepriben.kutubhadits';
+				  const pagelink = '\n\nUnduh Aplikasi Android: *Kutub Hadits (Puluhan Kitab Hadits dan Terjemahnya)* di alamat '+url_play_store;
+				  event.clipboardData.setData('text', document.getSelection() + pagelink);
+				  event.preventDefault();
+				});
+			})
+		</script>
+	</head>
+	<body>
+		<nav class="navbar navbar-default navbar-fixed-top" style="min-height: 30px;">
+		  <div class="container-fluid" style="padding-left:0;">
+		    <div class="navbar-header pull-right" style="display: inline-block; margin-top: 4px" dir="rtl">
+		      <a class="navbar-brand" href="javascript:void(0)"><i id="pro-sign" class="glyphicon glyphicon-certificate text-warning hidden" style="font-size:12px;vertical-align:super;"></i> <b>كتب الحديث</b>&nbsp;<span class="text-danger" style="font-size: 20px"></span></a>
+		    </div>
+	      <div class="pull-left"><button class="btn btn-sm btn-outline-light" data-toggle="modal" data-target="#modal-menu"><i class="navbar-brand glyphicon glyphicon-option-vertical" style="color: black;"></i></button></div>
+		  </div><!-- /.container-fluid -->
+		</nav>
+		<div id="container">
+			<div id="content" class="noselect"></div>
+		</div>
+		<div class="footer navbar-fixed-bottom">
+			<div class="btn-group btn-group-justified" role="group" aria-label="Justified button group">
+			  <div class="btn-group" role="group"><button type="button" class="btn btn-lg btn-default" data-toggle="modal" data-target="#modal-cari"><i class="glyphicon glyphicon-search"></i></button></div>
+			  <div class="btn-group" role="group"><button type="button" class="btn btn-lg btn-default" onclick="invertColor()"><i class="glyphicon glyphicon-adjust"></i></button></div>
+			  <div class="btn-group" role="group"><button type="button" class="btn btn-lg btn-default" onclick="next()"><i class="glyphicon glyphicon-chevron-left"></i></button></div>
+			  <div class="btn-group" role="group"><button type="button" class="btn btn-lg btn-default" id="sel-id" data-id="" data-max="" data-toggle="modal" data-target="#modal-ke" style="padding-left:0;padding-right: 0;vertical-align: middle;text-align: center;">0</button></div>
+			  <div id="btn-right" class="btn-group" role="group"><button type="button" class="btn btn-lg btn-default" onclick="prev()"><i class="glyphicon glyphicon-chevron-right"></i></button></div>
+			  <div class="btn-group" role="group"><button type="button" class="btn btn-lg btn-default" data-toggle="modal" data-target="#modal-bookmark"><i class="glyphicon glyphicon-bookmark"></i></button></div>
+			  <div class="btn-group" role="group"><button type="button" class="btn btn-lg btn-default" data-toggle="modal" data-target="#modal-pilih-kitab"><i class="glyphicon glyphicon-book"></i></button></div>
+			</div>
+		</div>
+		<!--Modal Menu-->
+		<div id="modal-menu" class="modal" tabindex="-1" role="dialog">
+		  <div class="modal-dialog" role="document" style="margin-left:0;margin-top:50px;width:200px;">
+		    <div class="modal-content">
+		    <table class="table" style="margin-bottom: 0">
+		    	<tr><td>
+						<div class="btn-group btn-group-justified" role="group" aria-label="Justified button group">
+						  <div class="btn-group" role="group">
+						    <button type="button" class="btn btn-default" onclick="resizeFont(-1)"><i class="glyphicon glyphicon-text-size" style="font-size:0.7em"></i></button>
+						  </div>
+						  <div class="btn-group" role="group">
+						    <button type="button" class="btn btn-default" onclick="resizeFont(1)"><i class="glyphicon glyphicon-text-size"></i></button>
+						  </div>
+						</div>
+		    	</td></tr>
+		    	<tr onclick="useHarakat()" id="harakat"><td><i class="glyphicon glyphicon-check"></i> Tampilkan Harakat</td></tr>
+		    	<tr onclick="JsInterface.shareApp()"><td><i class="glyphicon glyphicon-share-alt"></i> Share Aplikasi</td></tr>
+		    	<tr onclick="$('#modal-warning').modal('show');"><td><i class="glyphicon glyphicon-warning-sign"></i> Peringatan</td></tr>
+		    	<tr id="mnu-update" class="hidden"><td><a href="https://play.google.com/store/apps/details?id=com.tohakepriben.kutubhadits"><i class="glyphicon glyphicon-download-alt"></i> Update Aplikasi</a></td></tr>
+		    	<tr id="mnu-getpro" class="hidden"><td><a href="https://play.google.com/store/apps/details?id=com.tohakepriben.kutubhaditspro"><i class="glyphicon glyphicon-star"></i> Get Versi Pro</a></td></tr>
+		    </table>
+		    </div>
+		  </div>
+		</div>
+
+		<!--modal-cari-->
+		<div id="modal-cari" class="modal allow-scroll" tabindex="-1" role="dialog">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content" style="filter: opacity(0.8)">
+					<div class="modal-header" id="qwerty">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		      	<form id="form-cari">
+							<div class="form-group input-group" style="margin-bottom: 0;margin-right: 30px;">
+		            <input name="key" type="search" class="form-control" placeholder="keyword" required autofocus>
+		            <span class="input-group-btn">
+		              <button class="btn btn-default" type="button" onclick="$('[name=key]').val('').focus()"><i class="glyphicon glyphicon-erase"></i></button>
+		              <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+		            </span>
+		          </div>
+		        </form>
+						<div class="panel panel-default panel-tips" style="margin: 5px 0">
+              <div class="panel-heading">
+                <a data-toggle="collapse" data-parent="#qwerty" href="#ops-cari">
+				          <i class="glyphicon glyphicon-info-sign"></i> Gunakan operator <code>& (and)</code> dan <code>| (or)</code> untuk memaksimalkan pencarian.
+                </a>
+              </div>
+              <div id="ops-cari" class="panel-collapse collapse">
+		          	Sebagai contoh ada 3 halaman berisi teks sesuai urutan berikut:
+		          	<ol style="padding-inline-start: 20px;">
+		          		<li>Sholat puasa dan menikah adalah syariat islam.</li>
+		          		<li>Sholat 5 waktu wajib bagi setiap mukallaf.</li>
+		          		<li>Orang yang tidak mempu menikah disunnahkan berpuasa.</li>
+		          	</ol>
+		          	Kemudian kita akan mencari dengan kata kunci berikut:
+		          	<ul style="padding-inline-start: 20px; margin-bottom: 0">
+		          		<li>
+		          			<code>sholat nikah</code><br>
+		          			Mesin akan mencari setiap halaman yang mengandung kata <code>sholat nikah</code>. Maka tidak ada hasilnya karena tidak ada halaman yang memuat dua kata tersebut secara berurutan.
+		          		</li>
+		          		<li>
+		          			<code>sholat | nikah</code><br>
+		          			Mesin akan mencari setiap halaman yang mengandung kata <code>sholat</code> atau <code>nikah</code>. Hasilnya adalah halaman 1, 2 dan 3.
+		          		</li>
+		          		<li>
+		          			<code>sholat & nikah</code><br>
+		          			Mesin akan mencari setiap halaman yang mengandung kata <code>sholat</code> dan <code>nikah</code>. Hasilnya hanya halaman 1.
+		          		</li>
+		          		<li>
+		          			<code>puasa & (sholat | nikah)</code><br>
+		          			Mesin akan mencari setiap halaman yang mengandung kata <code>puasa</code> dan <code>sholat</code>, atau <code>puasa</code> dan <code>nikah</code>. Hasilnya adalah halaman 1 dan 3.
+		          		</li>
+		          		<li>
+		          			<code>(syariat & nikah) | (puasa & nikah)</code><br>
+		          			Mesin akan mencari setiap halaman yang mengandung kata <code>syariat</code> dan <code>nikah</code>, atau mengandung kata <code>puasa</code> dan <code>nikah</code>. Hasilnya adalah halaman 2 dan 3.
+		          		</li>
+		          	</ul>
+              </div>
+	          </div>
+						<div class="panel panel-default panel-pilih-kitab" style="margin: 0; user-select: none;">
+              <div class="panel-heading">
+                <a data-toggle="collapse" data-parent="#qwerty" href="#ops-kitab"><i class="glyphicon glyphicon-book"></i> Cari dalam kitab...</a>
+              </div>
+              <div id="ops-kitab" class="panel-collapse collapse">
+	                <div class="form-group rtl" id="pil-kitab-pencarian" style="padding: 10px; margin-bottom: 0">
+	                  <label id="lblAllKitab" class="checkbox-inline" style="display: block; border-bottom: 1px solid lightgray; margin-bottom: 5px; padding-bottom: 5px">
+                      <input id="checkedAllKitab" type="checkbox"><b>جميع الكتب</b></label>
+	                  <label class="checkbox-inline">
+                      <input type="checkbox" class="checkSingleKitab"><b>صحيح البخاري
+	                  </b></label>
+	                  <label class="checkbox-inline">
+                      <input type="checkbox" class="checkSingleKitab"><b>صحيح مسلم
+	                  </b></label>
+	                  <label class="checkbox-inline">
+                      <input type="checkbox" class="checkSingleKitab"><b>سنن النسائي
+	                  </b></label>
+	                  <label class="checkbox-inline">
+                      <input type="checkbox" class="checkSingleKitab"><b>سنن أبي داود
+	                  </b></label>
+	                  <label class="checkbox-inline">
+                      <input type="checkbox" class="checkSingleKitab"><b>سنن الترمذي
+	                  </b></label>
+	                  <label class="checkbox-inline">
+                      <input type="checkbox" class="checkSingleKitab"><b>سنن إبن ماجه
+	                  </b></label>
+	                  <label class="checkbox-inline">
+                      <input type="checkbox" class="checkSingleKitab"><b>الموطأ مالك
+	                  </b></label>
+	                  <label class="checkbox-inline">
+                      <input type="checkbox" class="checkSingleKitab"><b>مسند الشافعي
+	                  </b></label>
+	                  <label class="checkbox-inline">
+                      <input type="checkbox" class="checkSingleKitab"><b>مسند أحمد
+	                  </b></label>
+	                  <label class="checkbox-inline">
+                      <input type="checkbox" class="checkSingleKitab"><b>مسند الدارمي
+	                  </b></label>
+	                  <label class="checkbox-inline">
+                      <input type="checkbox" class="checkSingleKitab"><b>رياض الصالحين
+	                  </b></label>
+		              </div>
+									<p id="msg-free"></p>
+              </div>
+	          </div>
+		      </div>
+		    	<div class="modal-body" id="hasil-pencarian" style="padding-top:0"></div>
+		    </div>
+		  </div>
+		</div>
+
+		<!--modal-ke-->
+		<div id="modal-ke" class="modal" role="dialog">
+		  <div class="modal-dialog modal-sm" role="document">
+		    <div class="modal-content">
+					<div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title"><i class="glyphicon glyphicon-folder-open"></i>&nbsp;&nbsp;Ke halaman...</h4>
+		      </div>
+		    	<div class="modal-body">
+		      	<form id="form-ke">
+							<div class="form-group input-group" style="margin-bottom: 0;">
+		            <input id="sel-id-input" type="number" class="form-control" placeholder="Ketik halaman" min="1" max="" required autofocus>
+		            <span class="input-group-btn">
+		              <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-circle-arrow-right"></i></button>
+		            </span>
+		          </div>
+		        </form>
+		    	</div>
+		    </div>
+		  </div>
+		</div>
+
+		<!--modal-bookmark-->
+		<div id="modal-bookmark" class="modal allow-scroll" tabindex="-1" role="dialog">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content" style="filter: opacity(0.8)">
+					<div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title"><i class="glyphicon glyphicon-bookmark"></i> Penanda</h4>
+		      </div>
+		    	<div class="modal-body" id="hasil-bm"></div>
+		    	<div class="modal-footer">
+		    		<button class="btn btn-sm btn-success pull-left" onclick="bmAdd()"><i class="glyphicon glyphicon-plus"></i> Tambah</button>
+		    		<button class="btn btn-sm btn-primary" onclick="bmEdit()"><i class="glyphicon glyphicon-pencil"></i></button>
+		    		<button class="btn btn-sm btn-danger" onclick="bmHapus()"><i class="glyphicon glyphicon-trash"></i></button>
+		    		<button class="btn btn-sm btn-danger" onclick="bmClear()"><i class="glyphicon glyphicon-erase" style="transform: rotateY(180deg)"></i> Clear</button>
+		    	</div>
+		    </div>
+		  </div>
+		</div>
+
+		<!--modal-bm-add-->
+		<div id="modal-bm-add" class="modal" role="dialog">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		    	<form id="frm-bm-add">
+					<div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title"><i class="glyphicon glyphicon-plus"></i> Tambah Penanda</h4>
+		      </div>
+		    	<div class="modal-body">
+						<div class="form-group">
+		          <label>Nama Penanda</label>
+		          <input id="txt-bm-add" type="text" class="form-control" required="">
+			      </div>
+		    	</div>
+		    	<div class="modal-footer">
+		    		<button class="btn btn-sm btn-primary" type="submit">Simpan</button>
+		    		<button class="btn btn-sm btn-default" type="button" data-dismiss="modal">Batal</button>
+		    	</div>
+		    	</form>
+		    </div>
+		  </div>
+		</div>
+
+		<!--modal-bm-edit-->
+		<div id="modal-bm-edit" class="modal" role="dialog">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		    	<form id="frm-bm-edit">
+					<div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title"><i class="glyphicon glyphicon-pencil"></i> Edit Penanda</h4>
+		      </div>
+		    	<div class="modal-body">
+						<div class="form-group">
+		          <label>Nama Penanda</label>
+		          <input id="txt-bm-edit" type="text" class="form-control" required="">
+			      </div>
+		    	</div>
+		    	<div class="modal-footer">
+		    		<button class="btn btn-sm btn-primary" type="submit">Simpan</button>
+		    		<button class="btn btn-sm btn-default" type="button" data-dismiss="modal">Batal</button>
+		    	</div>
+		    	</form>
+		    </div>
+		  </div>
+		</div>
+		<!--modal-warning-->
+		<div id="modal-warning" class="modal allow-scroll" tabindex="-1" role="dialog" data-editmode="0">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content bg-danger">
+					<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title"><i class="glyphicon glyphicon-warning-sign"></i> Peringatan</h4></div>
+		    	<div class="modal-body">
+		    		<p class="text-justify">Seluruh konten yang dimuat dalam aplikasi ini bersumber dari internet. Banyak teks-teks Hadits yang mungkin tidak sesuai dengan naskah cetak atau terjemah yang menyalahi Madzhab Ahlussunnah Wal Jama'ah seperti penisbatan tempat, arah dan anggota tubuh kepada Allah Ta'ala tanpa dita&apos;wil</p>
+		    		<p class="text-justify">Aplikasi ini hanya untuk membantu saya dan orang-orang yang kesulitan menterjemahkan hadits. Gunakanlah dengan bijak. Jangan menggunakannya sebagai sumber rujukan utama. Memahami hadits harus belajar langsung kepada ahlinya, tidak cukup membaca sendiri apalagi mengacu pada terjemah.</p>
+		    		<hr>
+		    		<h4 class="text-center mt-2">AQIDAH AHLUSSUNNAH WAL JAMA'AH</h4>
+		    		<p class="rtl bold text-center" style="font-size:1.2em">لَيْسَ كَمِثْلِهِ شَيْءٌ، وَكَانَ اللهُ وَلَمْ يَكُنْ شَيْءٌ غَيْرُهُ، وَتَعَالَى عَنِ الْحُدُودِ وَالْغَايَاتِ وَالأَعْضَاءِ وَالأَرْكَانِ وَالأَدَوَاتِ، لا تَحْوِيهِ الْجِهَاتُ السِّتُّ كَسَائِرِ الْمُبْتَدَعَاتِ، مَهْمَا تَصَوَّرْتَ بِبَالِكَ فَاللهُ بِخِلَافِ ذَلِكَ</p>
+		    		<P class="text-justify">Allah Ta'ala tidak menyerupai sesuatu apapun dari makhlukNya, dan tidak ada sesuatu apapun yang menyerupaiNya</P>
+		    		<P class="text-justify">Allah Ta'ala ada tanpa permulaan, sebelum terciptanya makhluk, baik langit, bumi, arah dan tempat</P>
+		    		<P class="text-justify">Maha suci Allah dari ukuran dan batasan serta anggota tubuh. Tidak terliputi oleh arah (atas, bawah, depan, belakang, kanan dan kiri). Tidak sebagaimana makhluk yang terliputi arah</P>
+		    		<P class="text-justify">Ketika terbersit dalam fikiranmu tentang Allah, maka Allah tidak seperti itu</P>
+		    	</div>
+		    </div>
+		  </div>
+		</div>
+		<!--modal-pilih-kitab-->
+		<div id="modal-pilih-kitab" class="modal allow-scroll" tabindex="-1" role="dialog">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+					<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title"><i class="glyphicon glyphicon-book"></i> Pilih Kitab</h4></div>
+		    	<div class="modal-body">
+		    		<div class="table-responsive rtl" style="margin-bottom: 0; border: 0">
+		    			<table class="table table-condensed table-borderless tbl-kitab rtl">
+		    				<tr id="idx-0" onclick="ganti(this)" style="border-top: none">
+		    					<td><i class="glyphicon glyphicon-book"></i></td>
+		    					<td>
+		    						<div>صحيح البخاري</div>
+		    						<div>أبو عبد الله محمد بن إسماعيل البخاري (194 - 256 هـ)</div>
+		    					</td>
+		    				</tr>
+		    				<tr id="idx-1" onclick="ganti(this)">
+		    					<td><i class="glyphicon glyphicon-book"></i></td>
+		    					<td>
+		    						<div>صحيح مسلم</div>
+		    						<div>أبو الحسين مسلم بن الحجاج القشيري النيسابوري (206 - 261 هـ)</div>
+		    					</td>
+		    				</tr>
+		    				<tr id="idx-2" onclick="ganti(this)">
+		    					<td><i class="glyphicon glyphicon-book"></i></td>
+		    					<td>
+		    						<div>سنن النسائي</div>
+		    						<div>أبو عبد الرحمن أحمد بن شعيب النَّسائي (215 - 303 هـ)</div>
+		    					</td>
+		    				</tr>
+		    				<tr id="idx-3" onclick="ganti(this)">
+		    					<td><i class="glyphicon glyphicon-book"></i></td>
+		    					<td>
+		    						<div>سنن أبي داود</div>
+		    						<div>أبو داود سليمان بن الأشعث الأزدي السجستاني (202 - 275 هـ)</div>
+		    					</td>
+		    				</tr>
+		    				<tr id="idx-4" onclick="ganti(this)">
+		    					<td><i class="glyphicon glyphicon-book"></i></td>
+		    					<td>
+		    						<div>سنن الترمذي</div>
+		    						<div>أبو عيسى محمد بن عيسى السلمي الترمذي (209 - 279 هـ) </div>
+		    					</td>
+		    				</tr>
+		    				<tr id="idx-5" onclick="ganti(this)">
+		    					<td><i class="glyphicon glyphicon-book"></i></td>
+		    					<td>
+		    						<div>سنن إبن ماجه</div>
+		    						<div>أبو عبد الله محمد بن يزيد بن ماجه الربعي القزويني (209 - 273 هـ)</div>
+		    					</td>
+		    				</tr>
+		    				<tr id="idx-6" onclick="ganti(this)">
+		    					<td><i class="glyphicon glyphicon-book"></i></td>
+		    					<td>
+		    						<div>الموطأ مالك</div>
+		    						<div>أبو عبد الله مالك بن أنس الأصبحي الحميري المدني (93 - 179 هـ)</div>
+		    					</td>
+		    				</tr>
+		    				<tr id="idx-7" onclick="ganti(this)">
+		    					<td><i class="glyphicon glyphicon-book"></i></td>
+		    					<td>
+		    						<div>مسند الشافعي</div>
+		    						<div>أبو عبد الله محمد بن إدريس الشافعيّ المطلِبي القرشي (150 - 204 هـ)</div>
+		    					</td>
+		    				</tr>
+		    				<tr id="idx-8" onclick="ganti(this)">
+		    					<td><i class="glyphicon glyphicon-book"></i></td>
+		    					<td>
+		    						<div>مسند أحمد</div>
+		    						<div>أبو عبد الله أحمد بن محمد بن حنبل الشيباني الذهلي (164 - 241 هـ)</div>
+		    					</td>
+		    				</tr>
+		    				<tr id="idx-9" onclick="ganti(this)">
+		    					<td><i class="glyphicon glyphicon-book"></i></td>
+		    					<td>
+		    						<div>مسند الدارمي</div>
+		    						<div>أبو محمد عبد الله بن عبد الرحمن الدارمي التميمي (181 - 255 هـ)</div>
+		    					</td>
+		    				</tr>
+		    				<tr id="idx-10" onclick="ganti(this)">
+		    					<td><i class="glyphicon glyphicon-book"></i></td>
+		    					<td>
+		    						<div>رياض الصالحين</div>
+		    						<div>أبو زكريا يحيى بن شرف الحزامي النووي الشافعي (631 - 676 هـ)</div>
+		    					</td>
+		    				</tr>
+		    			</table>
+		    		</div>
+		    	</div>
+		    </div>
+		  </div>
+		</div>
+
+		<div id="blockOverlay" style="z-index: 2000; border: none; margin: 0px; padding: 0px; width: 100%; height: 100%; top: 0px; left: 0px; background-color: darkgray; opacity: 0.7; cursor: wait; position: fixed;"></div>
+		<div id="blockPage" style="z-index: 2011; position: absolute; padding: 0px; margin: 0px; width: 30%; top: 282.647px; left: 309.433px; text-align: center; color: rgb(0, 0, 0); border: none; background-color: transparent; cursor: wait;"><span class="timer"></span></div>
+		<script src="lib/js/main.js"></script>
+	</body>
+</html>

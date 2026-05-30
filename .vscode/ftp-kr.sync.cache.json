@@ -1,0 +1,186 @@
+{
+  "ftp://ftp.tohakepriben.com:21@tohakepr": {
+    "public_html": {
+      "_terjemah": {
+        ".htaccess": {
+          "type": "-",
+          "size": 1823,
+          "lmtime": 0,
+          "modified": false
+        },
+        ".well-known": {},
+        "AdobeArabic-Regular.otf": {
+          "type": "-",
+          "size": 376016,
+          "lmtime": 0,
+          "modified": false
+        },
+        "apk": {},
+        "application": {
+          "controllers": {
+            "Admin123.php": {
+              "type": "-",
+              "size": 9280,
+              "lmtime": 0,
+              "modified": false
+            },
+            "Ch.php": {
+              "type": "-",
+              "size": 483,
+              "lmtime": 0,
+              "modified": false
+            },
+            "Hadits.php": {
+              "type": "-",
+              "size": 654,
+              "lmtime": 0,
+              "modified": false
+            },
+            "Main.php": {
+              "type": "-",
+              "size": 2929,
+              "lmtime": 1707382558515,
+              "modified": false
+            },
+            "User.php": {
+              "type": "-",
+              "size": 684,
+              "lmtime": 0,
+              "modified": false
+            },
+            "index.html": {
+              "type": "-",
+              "size": 131,
+              "lmtime": 0,
+              "modified": false
+            }
+          }
+        },
+        "application.zip": {
+          "type": "-",
+          "size": 44035,
+          "lmtime": 0,
+          "modified": false
+        },
+        "assets": {
+          "FileSaver.js": {
+            "type": "-",
+            "size": 6132,
+            "lmtime": 0,
+            "modified": false
+          },
+          "baca.js": {
+            "type": "-",
+            "size": 1767,
+            "lmtime": 0,
+            "modified": false
+          },
+          "block.js": {
+            "type": "-",
+            "size": 916,
+            "lmtime": 0,
+            "modified": false
+          },
+          "blockui": {},
+          "bm.js": {
+            "type": "-",
+            "size": 1499,
+            "lmtime": 0,
+            "modified": false
+          },
+          "bootstrap": {},
+          "ckeditor5": {},
+          "common.css": {
+            "type": "-",
+            "size": 3932,
+            "lmtime": 0,
+            "modified": false
+          },
+          "common10.js": {
+            "type": "-",
+            "size": 10251,
+            "lmtime": 0,
+            "modified": false
+          },
+          "common11.js": {
+            "type": "-",
+            "size": 6107,
+            "lmtime": 0,
+            "modified": false
+          },
+          "common12.js": {
+            "type": "-",
+            "size": 6322,
+            "lmtime": 0,
+            "modified": false
+          },
+          "common8.js": {
+            "type": "-",
+            "size": 10020,
+            "lmtime": 0,
+            "modified": false
+          },
+          "common8.js.zip": {
+            "type": "-",
+            "size": 3427,
+            "lmtime": 0,
+            "modified": false
+          },
+          "common9.js": {
+            "type": "-",
+            "size": 10101,
+            "lmtime": 0,
+            "modified": false
+          },
+          "favicon.png": {
+            "type": "-",
+            "size": 6305,
+            "lmtime": 0,
+            "modified": false
+          },
+          "fn.js": {
+            "type": "-",
+            "size": 3013,
+            "lmtime": 0,
+            "modified": false
+          },
+          "fns.js": {
+            "type": "-",
+            "size": 3098,
+            "lmtime": 0,
+            "modified": false
+          },
+          "fqorib": {},
+          "iklan": {},
+          "jquery": {},
+          "jstree": {},
+          "localForage-1.10.0": {},
+          "markjs": {},
+          "select2": {},
+          "select2-bootstrap-theme-master": {}
+        },
+        "cgi-bin": {},
+        "error_log": {
+          "type": "-",
+          "size": 1138,
+          "lmtime": 0,
+          "modified": false
+        },
+        "index.php": {
+          "type": "-",
+          "size": 8355,
+          "lmtime": 0,
+          "modified": false
+        },
+        "system": {},
+        "terjemah.zip": {
+          "type": "-",
+          "size": 2316572,
+          "lmtime": 0,
+          "modified": false
+        }
+      }
+    }
+  },
+  "$version": 1
+}

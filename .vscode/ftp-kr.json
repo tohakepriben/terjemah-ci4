@@ -1,0 +1,16 @@
+{
+    "host": "ftp.tohakepriben.com",
+    "username": "tohakepr",
+    "password": "Br89q4b9gb*",
+    "remotePath": "public_html/_terjemah",
+    "protocol": "ftp",
+    "port": 21,
+    "fileNameEncoding": "utf8",
+    "autoUpload": false,
+    "autoDelete": true,
+    "autoDownload": false,
+    "ignore": [
+        ".git",
+        "/.vscode"
+    ]
+}
